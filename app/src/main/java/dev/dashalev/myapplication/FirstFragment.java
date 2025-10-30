@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import java.util.ArrayList;
 
@@ -24,9 +26,11 @@ public class FirstFragment extends Fragment {
 
     private EditText editText;
     private Button button;
+    private Button historyNav;
     private ListView listView;
     private ArrayList<String> multiplication;
     private ArrayAdapter<String> adapter;
+    private MultiplicationView viewModel;
 
     @Override
     public View onCreateView(
@@ -44,14 +48,26 @@ public class FirstFragment extends Fragment {
 
         editText = binding.editText;
         button = binding.button;
+        historyNav = binding.historyNav;
         listView = binding.listView;
+
+        viewModel = new ViewModelProvider(requireActivity()).get(MultiplicationView.class);
 
         multiplication = new ArrayList<>();
         adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, multiplication);
         listView.setAdapter(adapter);
+        
+        if (!viewModel.getCurrentTable().isEmpty()) {
+            multiplication.addAll(viewModel.getCurrentTable());
+            adapter.notifyDataSetChanged();
+        }
 
         button.setOnClickListener(v -> generateTable());
         listView.setOnItemClickListener((parent, view1, position, id) -> showDeleteDialog(position));
+        historyNav.setOnClickListener(v ->
+            NavHostFragment.findNavController(FirstFragment.this)
+                .navigate(R.id.action_FirstFragment_to_SecondFragment)
+); 
     }
 
       private void generateTable() {
