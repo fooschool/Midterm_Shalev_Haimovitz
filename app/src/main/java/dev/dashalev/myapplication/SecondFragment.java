@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -21,6 +22,7 @@ public class SecondFragment extends Fragment {
 
     private FragmentSecondBinding binding;
     private Button back;
+    private Button clear;
     private ListView listHistory;
     private ArrayAdapter<Integer> adapter;
     private MultiplicationView viewModel;
@@ -44,6 +46,7 @@ public class SecondFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(MultiplicationView.class);
 
         back = binding.back;
+        clear = binding.clear;
         listHistory = binding.listHistory;
 
         ArrayList<Integer> history = viewModel.getHistory();
@@ -55,6 +58,12 @@ public class SecondFragment extends Fragment {
                 NavHostFragment.findNavController(SecondFragment.this)
                         .navigate(R.id.action_SecondFragment_to_FirstFragment)
         );
+        
+        clear.setOnClickListener(v -> {
+            viewModel.getHistory().clear();
+            adapter.notifyDataSetChanged();
+            Toast.makeText(requireContext(), "History cleared", Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override
