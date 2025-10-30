@@ -42,15 +42,56 @@ public class FirstFragment extends Fragment {
   public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize views
         editText = binding.editText;
         button = binding.button;
         listView = binding.listView;
 
-        // Initialize ArrayList and adapter
         multiplication = new ArrayList<>();
         adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, multiplication);
         listView.setAdapter(adapter);
+
+        button.setOnClickListener(v -> generateTable());
+        listView.setOnItemClickListener((parent, view1, position, id) -> showDeleteDialog(position));
+    }
+
+      private void generateTable() {
+        String input = editText.getText().toString().trim();
+
+        if (input.isEmpty()) {
+            Toast.makeText(requireContext(), "Please enter a number", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            int number = Integer.parseInt(input);
+
+            multiplication.clear();
+
+            for (int i = 1; i <= 10; i++) {
+                int result = number * i;
+                multiplication.add(number + " × " + i + " = " + result);
+            }
+
+            adapter.notifyDataSetChanged();
+
+        } catch (NumberFormatException e) {
+            Toast.makeText(requireContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showDeleteDialog(int position) {
+        String item = multiplication.get(position);
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Delete Item")
+                .setMessage("Do you want to delete this row?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    multiplication.remove(position);
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(requireContext(), "Deleted: " + item, Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     @Override
