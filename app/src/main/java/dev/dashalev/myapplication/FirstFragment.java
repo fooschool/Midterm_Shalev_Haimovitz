@@ -83,10 +83,14 @@ public class FirstFragment extends Fragment {
 
             multiplication.clear();
 
+            viewModel.addToHistory(number);
+
             for (int i = 1; i <= 10; i++) {
                 int result = number * i;
                 multiplication.add(number + " × " + i + " = " + result);
             }
+            
+            viewModel.setCurrentTable(multiplication);
 
             adapter.notifyDataSetChanged();
 

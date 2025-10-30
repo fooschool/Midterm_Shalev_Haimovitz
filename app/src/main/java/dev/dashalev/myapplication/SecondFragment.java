@@ -4,16 +4,26 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
+
+import java.util.ArrayList;
 
 import dev.dashalev.myapplication.databinding.FragmentSecondBinding;
 
 public class SecondFragment extends Fragment {
 
     private FragmentSecondBinding binding;
+    private Button back;
+    private ListView listHistory;
+    private ArrayAdapter<Integer> adapter;
+    private MultiplicationView viewModel;
 
     @Override
     public View onCreateView(
@@ -28,6 +38,23 @@ public class SecondFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+         super.onViewCreated(view, savedInstanceState);
+
+        viewModel = new ViewModelProvider(requireActivity()).get(MultiplicationView.class);
+
+        back = binding.back;
+        listHistory = binding.listHistory;
+
+        ArrayList<Integer> history = viewModel.getHistory();
+
+        adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, history);
+        listHistory.setAdapter(adapter);
+
+        back.setOnClickListener(v ->
+                NavHostFragment.findNavController(SecondFragment.this)
+                        .navigate(R.id.action_SecondFragment_to_FirstFragment)
+        );
     }
 
     @Override
